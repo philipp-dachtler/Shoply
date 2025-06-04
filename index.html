@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="icons/favicon.png">
     <link rel="manifest" href="manifest.json" />
     <link rel="stylesheet" href="style.css" />
-    <title>Meine Einkaufsliste</title>
+    <title>Einkaufsliste</title>
 </head>
 <body>
     <div class="container">
         <h1>🛒 Einkaufsliste</h1>
         <input type="text" id="itemInput" placeholder="Neues Produkt..." autofocus />
-        <button onclick="addItem()">Hinzufügen</button>
+        <div class="button-group">
+            <button onclick="addItem()" class="primary">Hinzufügen</button>
+            <button id="shareLinkBtn" class="secondary">Liste teilen 🔗</button>
+            <button id="removeListItems" onclick="clearList()" class="danger">Alles löschen</button>
+        </div>
         <ul id="shoppingList"></ul>
-        <button id="shareLinkBtn">Liste teilen 🔗</button>
-        <button onclick="clearList()" class="danger">Alles löschen</button>
     </div>
     <script src="app.js"></script>
 </body>
 </html>
+<!-- Copyright (C) 2025 itsmarian.is-a.dev & philipp-dachtler.github.io -->
