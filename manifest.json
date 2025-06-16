@@ -5,13 +5,13 @@
   "display": "standalone",
   "theme_color": "#87CEEB",
   "background_color": "#FFFFFF",
-  "gcm_sender_id": "103953800507", // Wichtig für Push (feststehender Wert für PWAs)
+  "gcm_sender_id": "103953800507", 
   "permissions": ["notifications"],
   "description": "Praktische Einkaufsliste mit Erinnerungsfunktion",
   "orientation": "portrait-primary",
   "categories": ["shopping", "productivity"],
   "screenshots": [], // Optional: Screenshots für App Stores
-  "related_applications": [], // Optional: Links zu nativen Apps
+  "related_applications": [], 
   "prefer_related_applications": false,
   "icons": [
     {
