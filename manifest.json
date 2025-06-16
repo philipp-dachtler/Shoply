@@ -10,7 +10,7 @@
   "description": "Praktische Einkaufsliste mit Erinnerungsfunktion",
   "orientation": "portrait-primary",
   "categories": ["shopping", "productivity"],
-  "screenshots": [], // Optional: Screenshots für App Stores
+  "screenshots": [], 
   "related_applications": [], 
   "prefer_related_applications": false,
   "icons": [
@@ -24,7 +24,7 @@
       "src": "icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "badge" // Wichtig für Benachrichtigungs-Badges (Android)
+      "purpose": "badge" 
     },
     {
       "src": "icons/icon-96x96.png",
