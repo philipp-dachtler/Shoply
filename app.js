@@ -1,6 +1,6 @@
 let list = JSON.parse(localStorage.getItem("shoppingList")) || [];
 
-// ==================== NEUE FUNKTIONEN (PUSH-BENACHRICHTIGUNGEN) ====================
+// ==================== PUSH-BENACHRICHTIGUNGEN ====================
 async function requestNotificationPermission() {
   const permission = await Notification.requestPermission();
   if (permission === "granted") {
@@ -14,7 +14,6 @@ async function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
     try {
       await navigator.serviceWorker.register("/service-worker.js");
-      console.log("Service Worker registriert!");
     } catch (error) {
       console.error("Service Worker Fehler:", error);
     }
@@ -22,49 +21,86 @@ async function registerServiceWorker() {
 }
 
 function startReminderTimer() {
-  // Nur alle 12 Stunden trigger (in Prod)
+  // Alle 10 Sekunden (statt 12 Stunden)
   setInterval(() => {
     if (navigator.serviceWorker?.controller) {
       navigator.serviceWorker.controller.postMessage({
         type: "SHOW_REMINDER",
         title: "Einkaufs-Erinnerung",
-        body: "Hast du heute schon eingekauft? 🛒",
+        body: "Hast du schon alles eingekauft? 🛒",
       });
     }
-  }, 12 * 60 * 60 * 1000); // 12 Stunden
+  }, 10000); // 10.000 Millisekunden = 10 Sekunden
 }
 
-// Test-Button (für Entwicklung)
-function setupNotificationButton() {
-  const btn = document.createElement("button");
-  btn.id = "notification-test-btn";
-  btn.textContent = "🔔 Test";
-  btn.style.position = "fixed";
-  btn.style.bottom = "20px";
-  btn.style.right = "20px";
-  btn.style.zIndex = "1000";
-  btn.onclick = () => {
-    navigator.serviceWorker?.controller.postMessage({
-      type: "SHOW_REMINDER",
-      title: "Test",
-      body: "Push funktioniert!",
-    });
-  };
-  document.body.appendChild(btn);
+// ==================== BESTEHENDE FUNKTIONEN ====================
+function cleanUrl() {
+  const cleanUrl = window.location.origin + window.location.pathname;
+  window.history.replaceState(null, null, cleanUrl);
 }
 
-// ==================== BESTEHENDE FUNKTIONEN (EINKAUFSLISTE) ====================
-function cleanUrl() { /* ... unverändert ... */ }
-function saveList() { /* ... unverändert ... */ }
-function renderList() { /* ... unverändert ... */ }
-function addItem() { /* ... unverändert ... */ }
-function toggleItem(index) { /* ... unverändert ... */ }
-function generateShareUrl() { /* ... unverändert ... */ }
-function shareLink() { /* ... unverändert ... */ }
+function saveList() {
+  localStorage.setItem("shoppingList", JSON.stringify(list));
+}
+
+function renderList() {
+  const ul = document.getElementById("shoppingList");
+  ul.innerHTML = "";
+  list.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.textContent = item.name;
+    if (item.checked) li.classList.add("checked");
+    li.onclick = () => toggleItem(index);
+    ul.appendChild(li);
+  });
+}
+
+function addItem() {
+  const input = document.getElementById("itemInput");
+  const name = input.value.trim();
+  if (name) {
+    list.push({ name, checked: false });
+    input.value = "";
+    saveList();
+    renderList();
+    input.focus();
+  }
+}
+
+function toggleItem(index) {
+  list[index].checked = !list[index].checked;
+  saveList();
+  renderList();
+}
+
+function generateShareUrl() {
+  const baseUrl = window.location.origin + window.location.pathname;
+  const items = list.map(item => 
+    `${encodeURIComponent(item.name)}:${item.checked ? '1' : '0'}`
+  ).join(',');
+  return `${baseUrl}?items=${items}`;
+}
+
+function shareLink() {
+  const shareUrl = generateShareUrl();
+  navigator.clipboard.writeText(shareUrl).then(() => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Meine Einkaufsliste',
+        text: 'Hier ist meine Einkaufsliste:',
+        url: shareUrl
+      }).catch(console.error);
+    } else {
+      alert("Link kopiert! Einfach weiterschicken.");
+    }
+  }).catch(() => {
+    alert("Link zum Kopieren:\n" + shareUrl);
+  });
+}
 
 // ==================== INITIALISIERUNG ====================
 document.addEventListener("DOMContentLoaded", () => {
-  // Bestehende Logik (URL-Parameter, Liste rendern)
+  // URL-Parameter verarbeiten (für geteilte Listen)
   const params = new URLSearchParams(window.location.search);
   if (params.get("items")) {
     try {
@@ -85,11 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   renderList();
-  setupNotificationButton(); // Nur für Tests!
-  requestNotificationPermission();
+  requestNotificationPermission(); // Startet den 10-Sekunden-Timer
 });
 
-// Event-Listener (unverändert)
+// Event-Listener
 document.getElementById("addItem").addEventListener("click", addItem);
 document.getElementById("itemInput").addEventListener("keyup", (e) => {
   if (e.key === "Enter") addItem();
