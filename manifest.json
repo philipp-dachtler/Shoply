@@ -4,11 +4,41 @@
   "start_url": "./index.html",
   "display": "standalone",
   "theme_color": "#87CEEB",
+  "background_color": "#FFFFFF",
+  "gcm_sender_id": "103953800507", // Wichtig für Push (feststehender Wert für PWAs)
+  "permissions": ["notifications"],
+  "description": "Praktische Einkaufsliste mit Erinnerungsfunktion",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "productivity"],
+  "screenshots": [], // Optional: Screenshots für App Stores
+  "related_applications": [], // Optional: Links zu nativen Apps
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icons/favicon.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "badge" // Wichtig für Benachrichtigungs-Badges (Android)
+    },
+    {
+      "src": "icons/icon-96x96.png",
+      "sizes": "96x96",
       "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Neuer Einkauf",
+      "short_name": "Neu",
+      "description": "Neue Einkaufsliste starten",
+      "url": "./index.html?new=true",
+      "icons": [{ "src": "icons/add.png", "sizes": "96x96" }]
     }
   ]
 }
